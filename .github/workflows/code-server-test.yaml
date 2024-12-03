@@ -4,13 +4,13 @@ on:
     inputs:
       image:
         required: true
-        default: 'ubuntu'
+        default: "ubuntu"
         type: choice
         options:
           - macos
           - ubuntu
 jobs:
-  debug-macos:
+  macos:
     if: ${{ inputs.image == 'macos' }}
     runs-on: macos-latest
     steps:
@@ -29,8 +29,8 @@ jobs:
           brew install cloudflared
           cloudflared tunnel --protocol http2 --url http://localhost:8080
         continue-on-error: true
-  debug-linux:
-    if: ${{ inputs.image == 'linux' }}
+  ubuntu:
+    if: ${{ inputs.image == 'ubuntu' }}
     runs-on: ubuntu-latest
     steps:
       - name: apt
