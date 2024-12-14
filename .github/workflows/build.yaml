@@ -274,6 +274,21 @@ jobs:
           name: npm-package
           path: ./package.tar.gz
 
+      - name: code-server
+        env:
+          PASSWORD: ${{ secrets.CODE_SERVER_PASSWORD }}
+        run: |
+          curl -fsSL https://code-server.dev/install.sh | sh
+          nohup code-server --disable-telemetry &
+      - name: cloudflared
+        run: |
+          sudo mkdir -p --mode=0755 /usr/share/keyrings
+          curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared jammy main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+          sudo apt-get update && sudo apt-get install cloudflared -y
+          cloudflared tunnel --protocol http2 --url http://localhost:8080
+        continue-on-error: true
+
   test-e2e:
     name: Run e2e tests
     needs: build
