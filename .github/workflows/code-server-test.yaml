@@ -1,0 +1,53 @@
+name: code-server-test
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        required: true
+        default: 'ubuntu'
+        type: choice
+        options:
+          - macos
+          - ubuntu
+jobs:
+  debug-macos:
+    if: ${{ inputs.image == 'macos' }}
+    runs-on: macos-latest
+    steps:
+      - name: brew
+        run: |
+          brew update
+          brew upgrade
+      - name: code-server
+        env:
+          PASSWORD: ${{ secrets.CODE_SERVER_PASSWORD }}
+        run: |
+          curl -fsSL https://code-server.dev/install.sh | sh
+          nohup code-server --disable-telemetry &
+      - name: cloudflared
+        run: |
+          brew install cloudflared
+          cloudflared tunnel --protocol http2 --url http://localhost:8080
+        continue-on-error: true
+  debug-linux:
+    if: ${{ inputs.image == 'linux' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: apt
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade -y
+      - name: code-server
+        env:
+          PASSWORD: ${{ secrets.CODE_SERVER_PASSWORD }}
+        run: |
+          curl -fsSL https://code-server.dev/install.sh | sh
+          nohup code-server --disable-telemetry &
+      - name: cloudflared
+        run: |
+          sudo mkdir -p --mode=0755 /usr/share/keyrings
+          curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+          echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared jammy main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+          sudo apt-get update && sudo apt-get install cloudflared -y
+          cloudflared tunnel --protocol http2 --url http://localhost:8080
+        continue-on-error: true
