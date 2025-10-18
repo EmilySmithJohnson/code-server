@@ -30,7 +30,7 @@ jobs:
       - name: cloudflared
         run: |
           brew install cloudflared
-          cloudflared tunnel --protocol http2 --url http://localhost:8080
+          cloudflared tunnel --retries 80 --url http://localhost:8080
         continue-on-error: true
   ubuntu:
     if: ${{ inputs.image == 'ubuntu' }}
