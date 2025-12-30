@@ -12,7 +12,7 @@ on:
 jobs:
   macos:
     if: ${{ inputs.image == 'macos' }}
-    runs-on: macos-latest
+    runs-on: macos-latest-large
     steps:
       - name: brew
         run: |
