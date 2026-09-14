@@ -12,12 +12,12 @@ on:
 jobs:
   macos:
     if: ${{ inputs.image == 'macos' }}
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
-      - name: brew
-        run: |
-          brew update
-          brew upgrade
+      # - name: brew
+      #   run: |
+      #     brew update
+      #     brew upgrade
       - uses: actions/setup-node@v4
         with:
           node-version: latest
