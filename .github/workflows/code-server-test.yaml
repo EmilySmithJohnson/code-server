@@ -14,11 +14,10 @@ jobs:
     if: ${{ inputs.image == 'macos' }}
     runs-on: macos-15
     steps:
-      # - name: brew
-      #   run: |
-      #     brew update
-      #     brew upgrade
-      - uses: actions/setup-node@v4
+      - name: brew
+        run: |
+          brew update
+      - uses: actions/setup-node@v7
         with:
           node-version: latest
       - name: code-server
@@ -36,11 +35,7 @@ jobs:
     if: ${{ inputs.image == 'ubuntu' }}
     runs-on: ubuntu-latest
     steps:
-      - name: apt
-        run: |
-          sudo apt-get update
-          sudo apt-get upgrade -y
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: latest
       - name: code-server
